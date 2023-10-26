@@ -8,7 +8,7 @@ public class Utils
     {
         GameObject line = new GameObject("Line_ " + startPos.ToString() + "_" + endPos.ToString());
         LineRenderer lineRenderer = line.AddComponent<LineRenderer>();
-        lineRenderer.material = new Material(Shader.Find("Unlit/Color"));
+        lineRenderer.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
         lineRenderer.material.color = colour;
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, new Vector3(startPos.x, startPos.y, startPos.z));
