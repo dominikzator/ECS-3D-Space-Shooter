@@ -19,14 +19,19 @@ public class Spawner : MonoBehaviour
     [SerializeField] private PathManager PathManager;
     [SerializeField] private Mesh asteroidMesh;
     [SerializeField] private Mesh shipMesh;
+    [SerializeField] private Mesh projectileMesh;
     [SerializeField] private int stationarySpawnCount;
     [SerializeField] private int movableSpawnCount;
     [SerializeField] private Material asteroidMaterial;
     [SerializeField] private Material shipMaterial;
+    [SerializeField] private Material projectileMaterial;
     [SerializeField] private float AsteroidMinRadius;
     [SerializeField] private float AsteroidMaxRadius;
     public float WorldRadius;
     public float MaxAsteroidVelocitySpeed;
+
+    public Mesh ProjectileMesh => projectileMesh;
+    public Material ProjectileMaterial => projectileMaterial;
     
     private static Random random;
 
@@ -40,7 +45,7 @@ public class Spawner : MonoBehaviour
 
     public static Entity ShipEntity;
 
-    public static Octree.BoundsOctree<Asteroid> EntitiesOctTree = new BoundsOctree<Asteroid>(worldRadius * 1.5f, System.Numerics.Vector3.Zero, 1, 2f);
+    public static Octree.BoundsOctree<Entity> EntitiesOctTree = new BoundsOctree<Entity>(worldRadius * 1.5f, System.Numerics.Vector3.Zero, 1, 2f);
 
     // Example Burst job that creates many entities
     [GenerateTestsForBurstCompatibility]
@@ -66,7 +71,7 @@ public class Spawner : MonoBehaviour
                 var box = new BoundingBox(new System.Numerics.Vector3(pos.x, pos.y, pos.z),
                     new System.Numerics.Vector3(radius));
                 
-                EntitiesOctTree.Add(asteroid, box);
+                EntitiesOctTree.Add(e, box);
             }
         }
     }

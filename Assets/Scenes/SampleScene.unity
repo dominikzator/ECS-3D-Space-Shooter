@@ -537,6 +537,84 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 441807736}
   m_CullTransparentMesh: 1
+--- !u!1 &537692558
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 537692561}
+  - component: {fileID: 537692560}
+  - component: {fileID: 537692559}
+  m_Layer: 0
+  m_Name: SceneContext
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &537692559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537692558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6e1983053af74a42ae3d93487bfbdce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  globalValuesScriptableObject: {fileID: 11400000, guid: 1e1a6f6efdc2b114bb0b79548e981046, type: 2}
+--- !u!114 &537692560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537692558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89715ad69b973a14899afa2c6730b30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 537692559}
+  _installerPrefabs: []
+  _autoRun: 1
+  OnPreInstall:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostInstall:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPreResolve:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostResolve:
+    m_PersistentCalls:
+      m_Calls: []
+  _parentNewObjectsUnderSceneContext: 0
+  _contractNames: []
+  _parentContractNames: []
+--- !u!4 &537692561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537692558}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,10 +1235,12 @@ MonoBehaviour:
   PathManager: {fileID: 1263260754}
   asteroidMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   shipMesh: {fileID: 2838047407261934760, guid: 11925ca6a3fe3644286bb2aaa862d19f, type: 3}
+  projectileMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   stationarySpawnCount: 108000
   movableSpawnCount: 8000
   asteroidMaterial: {fileID: 2100000, guid: 61e85712d8994a64e947f18fd101ba55, type: 2}
   shipMaterial: {fileID: 2100000, guid: 4ad485273c590b142a60f24a4f8a2a24, type: 2}
+  projectileMaterial: {fileID: 2100000, guid: 1666c501375484445a08ceebb7c17cc5, type: 2}
   AsteroidMinRadius: 1
   AsteroidMaxRadius: 10
   WorldRadius: 7500
