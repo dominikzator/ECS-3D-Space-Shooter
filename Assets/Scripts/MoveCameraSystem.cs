@@ -12,14 +12,18 @@ public partial class MoveCameraSystem : SystemBase
 {
 	protected override void OnStartRunning()
 	{
-		var world = World.DefaultGameObjectInjectionWorld;
+		
 	}
 
 	protected override void OnUpdate()
 	{
 		Entities.ForEach((ref LocalTransform transform, ref Ship ship) =>
 			{
-				CameraManager.Instance.AlignCamera(transform.Position, transform.Forward(), transform.Right());
+				Transform cameraTransform = CameraManager.Instance.Camera.transform;
+				cameraTransform.forward = transform.Forward();
+				cameraTransform.position = transform.Position;
+				cameraTransform.position += -(Vector3)transform.Forward() * 10f;
+				cameraTransform.RotateAround(transform.Position, transform.Right(), 20);
 			}).Run();
 	}
 }

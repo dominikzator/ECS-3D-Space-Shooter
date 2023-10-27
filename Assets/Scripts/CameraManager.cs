@@ -9,6 +9,8 @@ public class CameraManager : MonoBehaviour
     public static CameraManager Instance;
     
     [SerializeField] private Camera camera;
+    
+    public Camera Camera => camera;
 
     private float3 shipPos;
     private float3 shipForwardVec;
@@ -20,20 +22,5 @@ public class CameraManager : MonoBehaviour
         {
             Instance = this;
         }
-    }
-
-    private void Update()
-    {
-        camera.transform.forward = shipForwardVec;
-        camera.transform.position = shipPos;
-        camera.transform.position += -(Vector3)shipForwardVec * 10f;
-        camera.transform.RotateAround(shipPos, shipRightVec, 45);
-    }
-
-    public void AlignCamera(float3 pos, float3 forward, float3 right)
-    {
-        shipPos = pos;
-        shipForwardVec = forward;
-        shipRightVec = right;
     }
 }

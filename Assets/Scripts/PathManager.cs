@@ -19,7 +19,7 @@ public class PathManager : MonoBehaviour
     [HideInInspector] public List<float> SegmentTimes = new List<float>();
     
     private float waypointLineWidth = 0.2f;
-    private Color waypointColor = Color.yellow;
+    private Color waypointColor = Color.cyan;
 
     private void Awake()
     {

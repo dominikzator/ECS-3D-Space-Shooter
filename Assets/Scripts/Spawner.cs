@@ -82,9 +82,7 @@ public class Spawner : MonoBehaviour
             var e = Ecb.Instantiate(index, Prototype);
             
             Ecb.SetComponent(index, e, MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
-            var pos = random.NextFloat3Direction() * random.NextFloat(100f, worldRadius);
-            var radius = random.NextFloat(asteroidMinRadius, asteroidMaxRadius);
-            Ecb.SetComponent(index, e, new LocalTransform {Position = pos, Scale = radius, Rotation = quaternion.LookRotation(startingShipForwardVector, new float3(0f, 1f, 0f))});
+            Ecb.SetComponent(index, e, new LocalTransform {Position = Vector3.zero, Scale = 5f, Rotation = quaternion.LookRotation(startingShipForwardVector, new float3(0f, 1f, 0f))});
             Ecb.SetComponent(index, e, new Ship());
             ShipEntity = Prototype;
         }
@@ -126,7 +124,7 @@ public class Spawner : MonoBehaviour
             asteroidMeshArray,
             MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
         
-        entityManager.AddComponentData(prototype, new LocalTransform{Position = default, Scale = default, Rotation = quaternion.identity});
+        entityManager.AddComponentData(prototype, new LocalTransform{Position = default, Scale = random.NextFloat(asteroidMinRadius, asteroidMaxRadius), Rotation = quaternion.identity});
         entityManager.AddComponentData(prototype, new Asteroid {Position = Vector3.zero, Radius = 1f, LinearVelocity = Vector3.zero});
         
         var shipPrototype = entityManager.CreateEntity();
@@ -137,7 +135,7 @@ public class Spawner : MonoBehaviour
             shipMeshArray,
             MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
         
-        entityManager.AddComponentData(shipPrototype, new LocalTransform {Position = Vector3.zero, Scale = random.NextFloat(asteroidMinRadius, asteroidMaxRadius), Rotation = quaternion.identity});
+        entityManager.AddComponentData(shipPrototype, new LocalTransform {Position = Vector3.zero, Scale = 1f, Rotation = quaternion.identity});
         entityManager.AddComponentData(shipPrototype, new Ship());
 
         var spawnShipJob = new SpawnShipJob()
