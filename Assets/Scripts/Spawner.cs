@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Octree;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -32,10 +33,14 @@ public class Spawner : MonoBehaviour
     private static PathManager pathManager;
     private static float asteroidMinRadius;
     private static float asteroidMaxRadius;
-    private static float worldRadius;
+    private static float worldRadius = 7500f;
     private static float maxAsteroidVelocitySpeed;
 
     private static float3 startingShipForwardVector;
+
+    public static Entity ShipEntity;
+
+    public static Octree.BoundsOctree<Asteroid> EntitiesOctTree = new BoundsOctree<Asteroid>(worldRadius * 1.5f, System.Numerics.Vector3.Zero, 1, 2f);
 
     // Example Burst job that creates many entities
     [GenerateTestsForBurstCompatibility]
@@ -48,12 +53,21 @@ public class Spawner : MonoBehaviour
         public void Execute(int index)
         {
             var e = Ecb.Instantiate(index, Prototype);
-            
             Ecb.SetComponent(index, e, MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
             var pos = random.NextFloat3Direction() * random.NextFloat(100f, worldRadius);
             var velocity = Moving ? random.NextFloat3Direction() * maxAsteroidVelocitySpeed : float3.zero;
-            Ecb.SetComponent(index, e, new LocalTransform {Position = pos, Scale = random.NextFloat(asteroidMinRadius, asteroidMaxRadius), Rotation = quaternion.identity});
-            Ecb.SetComponent(index, e, new Asteroid {Position = pos, Radius = random.NextFloat(asteroidMinRadius, asteroidMaxRadius), LinearVelocity = velocity});
+            var radius = random.NextFloat(asteroidMinRadius, asteroidMaxRadius);
+            var asteroid = new Asteroid {Position = pos, Radius = radius, LinearVelocity = velocity};
+            Ecb.SetComponent(index, e, new LocalTransform {Position = pos, Scale = radius, Rotation = quaternion.identity});
+            Ecb.SetComponent(index, e, asteroid);
+
+            if (!Moving)
+            {
+                var box = new BoundingBox(new System.Numerics.Vector3(pos.x, pos.y, pos.z),
+                    new System.Numerics.Vector3(radius));
+                
+                EntitiesOctTree.Add(asteroid, box);
+            }
         }
     }
     
@@ -69,8 +83,10 @@ public class Spawner : MonoBehaviour
             
             Ecb.SetComponent(index, e, MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
             var pos = random.NextFloat3Direction() * random.NextFloat(100f, worldRadius);
-            Ecb.SetComponent(index, e, new LocalTransform {Position = pos, Scale = random.NextFloat(asteroidMinRadius, asteroidMaxRadius), Rotation = quaternion.LookRotation(startingShipForwardVector, new float3(0f, 1f, 0f))});
-            Ecb.SetComponent(index, e, new Ship {Position = Vector3.zero});
+            var radius = random.NextFloat(asteroidMinRadius, asteroidMaxRadius);
+            Ecb.SetComponent(index, e, new LocalTransform {Position = pos, Scale = radius, Rotation = quaternion.LookRotation(startingShipForwardVector, new float3(0f, 1f, 0f))});
+            Ecb.SetComponent(index, e, new Ship());
+            ShipEntity = Prototype;
         }
     }
 
@@ -113,26 +129,6 @@ public class Spawner : MonoBehaviour
         entityManager.AddComponentData(prototype, new LocalTransform{Position = default, Scale = default, Rotation = quaternion.identity});
         entityManager.AddComponentData(prototype, new Asteroid {Position = Vector3.zero, Radius = 1f, LinearVelocity = Vector3.zero});
         
-        var spawnStationaryJob = new SpawnAsteroidJob
-        {
-            Prototype = prototype,
-            Ecb = ecb.AsParallelWriter(),
-            Moving = false
-        };
-
-        var spawnStationaryHandle = spawnStationaryJob.Schedule(stationarySpawnCount,128);
-        spawnStationaryHandle.Complete();
-        
-        var spawnMovingJob = new SpawnAsteroidJob
-        {
-            Prototype = prototype,
-            Ecb = ecb.AsParallelWriter(),
-            Moving = true
-        };
-
-        var spawnMovingHandle = spawnMovingJob.Schedule(movableSpawnCount,128);
-        spawnMovingHandle.Complete();
-
         var shipPrototype = entityManager.CreateEntity();
         RenderMeshUtility.AddComponents(
             shipPrototype,
@@ -142,7 +138,7 @@ public class Spawner : MonoBehaviour
             MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
         
         entityManager.AddComponentData(shipPrototype, new LocalTransform {Position = Vector3.zero, Scale = random.NextFloat(asteroidMinRadius, asteroidMaxRadius), Rotation = quaternion.identity});
-        entityManager.AddComponentData(shipPrototype, new Ship {Position = Vector3.zero});
+        entityManager.AddComponentData(shipPrototype, new Ship());
 
         var spawnShipJob = new SpawnShipJob()
         {
@@ -152,6 +148,26 @@ public class Spawner : MonoBehaviour
 
         var spawnShipHandle = spawnShipJob.Schedule(1, 128);
         spawnShipHandle.Complete();
+        
+        var spawnStationaryJob = new SpawnAsteroidJob
+        {
+            Prototype = prototype,
+            Ecb = ecb.AsParallelWriter(),
+            Moving = false
+        };
+
+        var spawnStationaryHandle = spawnStationaryJob.Schedule(stationarySpawnCount,stationarySpawnCount);
+        spawnStationaryHandle.Complete();
+        
+        var spawnMovingJob = new SpawnAsteroidJob
+        {
+            Prototype = prototype,
+            Ecb = ecb.AsParallelWriter(),
+            Moving = true
+        };
+
+        var spawnMovingHandle = spawnMovingJob.Schedule(movableSpawnCount,movableSpawnCount);
+        spawnMovingHandle.Complete();
 
         ecb.Playback(entityManager);
         ecb.Dispose();

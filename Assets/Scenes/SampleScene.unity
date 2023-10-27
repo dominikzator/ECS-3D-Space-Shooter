@@ -469,8 +469,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278255568
-  m_fontColor: {r: 0.8156863, g: 1, b: 0, a: 1}
+    rgba: 4294967040
+  m_fontColor: {r: 0, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1188,7 +1188,7 @@ MonoBehaviour:
   PathManager: {fileID: 1263260754}
   asteroidMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   shipMesh: {fileID: 2838047407261934760, guid: 11925ca6a3fe3644286bb2aaa862d19f, type: 3}
-  stationarySpawnCount: 100000
+  stationarySpawnCount: 108000
   movableSpawnCount: 8000
   asteroidMaterial: {fileID: 2100000, guid: 61e85712d8994a64e947f18fd101ba55, type: 2}
   shipMaterial: {fileID: 2100000, guid: 4ad485273c590b142a60f24a4f8a2a24, type: 2}
@@ -1332,8 +1332,8 @@ MonoBehaviour:
   - {fileID: 936150503}
   - {fileID: 160343591}
   - {fileID: 163763025}
-  minRandomVelocity: 10
-  maxRandomVelocity: 20
+  minRandomVelocity: 20
+  maxRandomVelocity: 50
   Velocities: []
   SegmentTimes: []
 --- !u!4 &1263260755

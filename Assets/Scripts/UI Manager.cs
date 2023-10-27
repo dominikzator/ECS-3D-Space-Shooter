@@ -18,9 +18,8 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void SetProgressText(float percentValue) //percent as float value from 0 to 1
+    public void SetProgressText(float percentValue)
     {
-        Debug.Log("SetProgressText");
-        progressText.text = $"Progress: {percentValue * 100f}%";
+        progressText.text = $"Progress: {percentValue}%";
     }
 }
