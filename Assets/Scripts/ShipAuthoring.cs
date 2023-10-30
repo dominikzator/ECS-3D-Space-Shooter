@@ -6,6 +6,8 @@ using Unity.Transforms;
 class ShipAuthoring : MonoBehaviour
 {
     public GameObject Prefab;
+    public float ProjectileSpeed;
+    public float ProjectileLifetime;
 }
 
 class ShipBaker : Baker<ShipAuthoring>
@@ -16,6 +18,11 @@ class ShipBaker : Baker<ShipAuthoring>
         AddComponent(entity, new Ship
         {
             ProjectilePrefab = GetEntity(authoring.Prefab, TransformUsageFlags.Dynamic),
+            Time = default,
+            FinishedPath = default,
+            WaypointProgress = default,
+            ProjectileSpeed = authoring.ProjectileSpeed,
+            ProjectileLifetime = authoring.ProjectileLifetime
         });
         AddComponent(entity, new LocalTransform{Position = Vector3.zero, Scale = 5f, Rotation = quaternion.identity});
     }

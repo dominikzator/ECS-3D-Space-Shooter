@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d19cfa082759f949a479a42e39f5e36, type: 3}
   m_Name: GlobalValuesSO
   m_EditorClassIdentifier: 
-  shootingIntervalInSeconds: 0.78
+  shootingIntervalInSeconds: 0.3

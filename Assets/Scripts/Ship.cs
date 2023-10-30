@@ -6,4 +6,6 @@ public struct Ship : IComponentData
     public float Time;
     public int WaypointProgress;
     public bool FinishedPath;
+    public float ProjectileSpeed;
+    public float ProjectileLifetime;
 }
