@@ -4,44 +4,57 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
-using Random = Unity.Mathematics.Random;
 
-[RequireMatchingQueriesForUpdate]
-public partial class MoveShipSystem : SystemBase
+[BurstCompile]
+public partial struct MoveShipSystem : ISystem
 {
-	protected override void OnUpdate()
+	[BurstCompile]
+	public void OnCreate(ref SystemState state)
 	{
-		Entities.ForEach((ref LocalTransform transform, ref Ship ship) =>
+		state.RequireForUpdate<Ship>();
+	}
+
+	[BurstCompile]
+	public void OnDestroy(ref SystemState state)
+	{
+	}
+
+	[BurstCompile]
+	public void OnUpdate(ref SystemState state)
+	{
+		var deltaTime = SystemAPI.Time.DeltaTime;
+		var timeElapsed = SystemAPI.Time.ElapsedTime;
+
+		foreach (var (transform, ship) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<Ship>>())
 		{
-			float dT = SystemAPI.Time.DeltaTime;
-			if (ship.FinishedPath)
+			if (ship.ValueRO.FinishedPath)
 			{
 				return;
 			}
-			transform.Rotation = quaternion.LookRotation(PathManager.Instance.Velocities[ship.WaypointProgress], transform.Up());
-			ship.Time += dT;
+			
+			transform.ValueRW.Rotation = quaternion.LookRotation(PathManager.Instance.Velocities[ship.ValueRW.WaypointProgress], transform.ValueRO.Up());
+			ship.ValueRW.Time += deltaTime;
 			var timeSum = PathManager.Instance.SegmentTimes.Sum() + 5f;
-			var progress = Math.Clamp(SystemAPI.Time.ElapsedTime / timeSum, 0f, 1f);
+			var progress = Math.Clamp(timeElapsed / timeSum, 0f, 1f);
 			var formatString = String.Format("{0:0.##}", progress * 100f);
 			float.TryParse(formatString, out float progressParsed);
 			UIManager.Instance.SetProgressText(progressParsed);
-			if (ship.Time >= 5f)
+			if (ship.ValueRO.Time >= 5f)
 			{
-				var segmentTime = PathManager.Instance.SegmentTimes[ship.WaypointProgress];
+				var segmentTime = PathManager.Instance.SegmentTimes[ship.ValueRO.WaypointProgress];
             
-				transform.Position += PathManager.Instance.Velocities[ship.WaypointProgress] * dT;
-				if (ship.Time >= segmentTime + 5f)
+				transform.ValueRW.Position += PathManager.Instance.Velocities[ship.ValueRO.WaypointProgress] * deltaTime;
+				if (ship.ValueRO.Time >= segmentTime + 5f)
 				{
-					ship.WaypointProgress++;
-					if (ship.WaypointProgress == PathManager.Instance.Velocities.Count)
+					ship.ValueRW.WaypointProgress++;
+					if (ship.ValueRO.WaypointProgress == PathManager.Instance.Velocities.Count)
 					{
-						ship.FinishedPath = true;
+						ship.ValueRW.FinishedPath = true;
 						return;
 					}
-					ship.Time = 5f;
+					ship.ValueRW.Time = 5f;
 				}
 			}
-		}).Run();
+		}
 	}
 }
