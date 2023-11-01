@@ -6,4 +6,6 @@ public struct Asteroid : IComponentData
     public float3 Position;
     public float3 LinearVelocity;
     public float Radius;
+    public float MinAsteroidSpeed;
+    public float MaxAsteroidSpeed;
 }

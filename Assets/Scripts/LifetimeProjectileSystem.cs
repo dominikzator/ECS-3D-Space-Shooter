@@ -31,7 +31,6 @@ public partial struct LifetimeProjectileSystem : ISystem
 			projectile.ValueRW.ProjectileLifeTime -= deltaTime;
 			if (projectile.ValueRO.ProjectileLifeTime < 0f)
 			{
-				Debug.Log("Kill Projectile!");
 				var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
 				var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 				ecb.DestroyEntity(entity);

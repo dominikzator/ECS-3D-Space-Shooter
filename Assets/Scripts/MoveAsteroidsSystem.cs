@@ -3,7 +3,7 @@ using Unity.Entities;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup))]
+[UpdateAfter(typeof(EndSimulationEntityCommandBufferSystem))]
 public partial struct MoveAsteroidsSystem : ISystem
 {
 	[BurstCompile]
