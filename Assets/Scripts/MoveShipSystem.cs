@@ -32,7 +32,7 @@ public partial struct MoveShipSystem : ISystem
 				return;
 			}
 			
-			transform.ValueRW.Rotation = quaternion.LookRotation(PathManager.Instance.Velocities[ship.ValueRW.WaypointProgress], transform.ValueRO.Up());
+			transform.ValueRW.Rotation = quaternion.LookRotation(PathManager.Instance.Velocities[ship.ValueRW.WaypointProgress], new float3(0f, 1f, 0f));
 			ship.ValueRW.Time += deltaTime;
 			var timeSum = PathManager.Instance.SegmentTimes.Sum() + 5f;
 			var progress = Math.Clamp(timeElapsed / timeSum, 0f, 1f);

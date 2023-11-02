@@ -37,10 +37,6 @@ public partial struct ProjectileCollisionCheckSystem : ISystem
 			queryBox.SetMinMax(new System.Numerics.Vector3(queryBox.Min.X,queryBox.Min.Y, queryBox.Min.Z), new Vector3(queryBox.Max.X,queryBox.Max.Y, queryBox.Max.Z));
 			var results = World.Instance.Query(queryBox);
 			
-			/*var asteroids = new List<Entity>();
-			asteroids.AddRange(World.Instance.MovingAsteroidsInRange);
-			asteroids.AddRange(results);*/
-			
 			foreach (var asteroidEntity in results)
 			{
 				try
@@ -83,6 +79,7 @@ public partial struct ProjectileCollisionCheckSystem : ISystem
             {
                 ECB.DestroyEntity(ProjectileEntity);
                 ECB.DestroyEntity(AsteroidEntity);
+                World.Instance.AsteroidsHit++;
             }
 		}
 	}

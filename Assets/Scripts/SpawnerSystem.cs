@@ -14,7 +14,6 @@ public partial struct SpawnerSystem : ISystem
 	private static int movingSpawned = 0;
 	private bool finishedSpawning;
 	private bool structureInitialized;
-	private int stationaryCount;
     
 	[BurstCompile]
 	public void OnCreate(ref SystemState state)
@@ -41,7 +40,6 @@ public partial struct SpawnerSystem : ISystem
 					}
 					if (asteroid.ValueRO.LinearVelocity.x == 0 && asteroid.ValueRO.LinearVelocity.y == 0 && asteroid.ValueRO.LinearVelocity.z == 0)
 					{
-						stationaryCount++;
 						var box = new BoundingBox(new System.Numerics.Vector3(transform.ValueRO.Position.x, transform.ValueRO.Position.y, transform.ValueRO.Position.z), new System.Numerics.Vector3(asteroid.ValueRO.Radius, asteroid.ValueRO.Radius, asteroid.ValueRO.Radius));
 						World.Instance.EntitiesOctTree.Add(entity, box);
 					}

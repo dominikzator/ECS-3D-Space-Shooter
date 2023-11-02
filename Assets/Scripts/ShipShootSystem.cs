@@ -67,10 +67,6 @@ public partial struct ShipShootSystem : ISystem
 			World.Instance.QueryBox = new Octree.BoundingBox(new Vector3(shipPos.x, shipPos.y, shipPos.z), new Vector3(shipVelocity.Length() + (PathManager.Instance.MaxRandomVelocity * ship.ValueRO.ProjectileSpeed)));
 			World.Instance.QueryBox.SetMinMax(new Vector3(World.Instance.QueryBox.Min.X,World.Instance.QueryBox.Min.Y, World.Instance.QueryBox.Min.Z), new Vector3(World.Instance.QueryBox.Max.X,World.Instance.QueryBox.Max.Y, World.Instance.QueryBox.Max.Z));
 			results = World.Instance.Query(World.Instance.QueryBox);
-
-			/*var asteroids = new List<Entity>();
-			asteroids.AddRange(World.Instance.MovingAsteroidsInRange);
-			asteroids.AddRange(results);*/
             
 			foreach (var target in results.Where(p => !shootedObjects.Contains(p)))
 			{

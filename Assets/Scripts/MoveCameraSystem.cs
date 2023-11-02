@@ -15,10 +15,11 @@ public partial class MoveCameraSystem : SystemBase
 		Entities.ForEach((ref LocalTransform transform, ref Ship ship) =>
 			{
 				Transform cameraTransform = CameraManager.Instance.Camera.transform;
+				cameraTransform.transform.rotation = Quaternion.identity;
 				cameraTransform.forward = transform.Forward();
 				cameraTransform.position = transform.Position;
-				cameraTransform.position += -(Vector3)transform.Forward() * 10f;
-				cameraTransform.RotateAround(transform.Position, transform.Right(), 20);
+				cameraTransform.position -= (Vector3)transform.Forward() * 15f;
+				cameraTransform.RotateAround(transform.Position, transform.Right(), 15);
 			}).Run();
 	}
 }

@@ -22,6 +22,35 @@ public class World : MonoBehaviour
     [SerializeField] private float minAsteroidVelocitySpeed;
     [SerializeField] private float maxAsteroidVelocitySpeed;
 
+    private int asteroidsHit = 0;
+    private int misses = 0;
+
+    public int AsteroidsHit
+    {
+        get
+        {
+            return asteroidsHit;
+        }
+        set
+        {
+            asteroidsHit = value;
+            UIManager.Instance.NeedsUpdate = true;
+        }
+    }
+
+    public int Misses
+    {
+        get
+        {
+            return misses;
+        }
+        set
+        {
+            misses = value;
+            UIManager.Instance.NeedsUpdate = true;
+        }
+    }
+
     public float WorldRadius => worldRadius;
     public float MinAsteroidVelocitySpeed => minAsteroidVelocitySpeed;
     public float MaxAsteroidVelocitySpeed => maxAsteroidVelocitySpeed;

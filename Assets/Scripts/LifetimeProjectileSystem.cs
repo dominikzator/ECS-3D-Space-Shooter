@@ -34,6 +34,7 @@ public partial struct LifetimeProjectileSystem : ISystem
 				var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
 				var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 				ecb.DestroyEntity(entity);
+				World.Instance.Misses++;
 			}
 			
 		}

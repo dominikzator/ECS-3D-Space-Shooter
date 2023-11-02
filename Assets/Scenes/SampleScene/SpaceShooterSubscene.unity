@@ -157,7 +157,7 @@ MonoBehaviour:
   minAsteroidSpeed: 10
   maxAsteroidSpeed: 20
   asteroidPrefab: {fileID: 3754917656253698704, guid: 76ace2b0784f1fe4997a85d82b1ed094, type: 3}
-  stationaryAsteroidsCount: 120000
+  stationaryAsteroidsCount: 150000
   movingAsteroidsCount: 0
 --- !u!4 &35372991
 Transform:
