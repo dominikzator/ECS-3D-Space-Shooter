@@ -13,6 +13,8 @@ public class PathManager : MonoBehaviour
     [SerializeField] private float minRandomVelocity;
     [SerializeField] private float maxRandomVelocity;
 
+    public float MaxRandomVelocity => maxRandomVelocity;
+
     public List<Transform> Waypoints => waypoints;
     
     [HideInInspector] public List<float3> Velocities = new List<float3>();

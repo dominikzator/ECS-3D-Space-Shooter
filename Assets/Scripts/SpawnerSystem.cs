@@ -1,3 +1,4 @@
+using System;
 using Octree;
 using Unity.Entities;
 using Unity.Transforms;
@@ -31,6 +32,7 @@ public partial struct SpawnerSystem : ISystem
 		{
 			if (!structureInitialized)
 			{
+				var tempECB = new EntityCommandBuffer(Allocator.TempJob);
 				foreach (var (transform, asteroid, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<Asteroid>>().WithEntityAccess())
 				{
 					if (entity.Index < 0)
@@ -43,8 +45,13 @@ public partial struct SpawnerSystem : ISystem
 						var box = new BoundingBox(new System.Numerics.Vector3(transform.ValueRO.Position.x, transform.ValueRO.Position.y, transform.ValueRO.Position.z), new System.Numerics.Vector3(asteroid.ValueRO.Radius, asteroid.ValueRO.Radius, asteroid.ValueRO.Radius));
 						World.Instance.EntitiesOctTree.Add(entity, box);
 					}
+					else
+					{
+						tempECB.AddComponent<MovingAsteroid>(entity);
+					}
 				}
                 structureInitialized = true;
+                tempECB.Playback(state.EntityManager);
 			}
 			return;
 		}

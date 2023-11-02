@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 using Vector3 = System.Numerics.Vector3;
 
 [BurstCompile]
@@ -16,16 +18,15 @@ public partial struct ShipShootSystem : ISystem
 	private bool initialized;
 	private EntityManager manager;
 	private NativeArray<Asteroid> nativeAsteroids;
-	
-	private static Octree.BoundingBox queryBox = new Octree.BoundingBox(Vector3.Zero, Vector3.Zero);
-	public static float ShipShootingRange = 100f;
-
+    
 	private static float shootInterval = 0.4f;
 	private static double lastTimeShoot = 0f;
 
 	private Entity projectileEntity;
 	private ShipAspect shipAspect;
 	private float3 shipPos;
+	
+	private static List<Entity> results = new List<Entity>();
 
 	private static List<Entity> shootedObjects = new List<Entity>();
 	private bool CanShoot(ref SystemState state)
@@ -52,23 +53,31 @@ public partial struct ShipShootSystem : ISystem
 		{
 			return;
 		}
-        
-		Entity[] results = default;
+		results.Clear();
 		var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
 		var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-		foreach (var (transform, ship)  in SystemAPI.Query<RefRW<LocalTransform>, RefRW<Ship>>())
+		foreach (var (transform, ship) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<Ship>>())
 		{
 			if (ship.ValueRO.FinishedPath)
 			{
 				return;
 			}
 			shipPos = transform.ValueRO.Position;
-			queryBox = new Octree.BoundingBox(new Vector3(shipPos.x, shipPos.y, shipPos.z), new Vector3(ShipShootingRange));
-			queryBox.SetMinMax(new Vector3(queryBox.Min.X,queryBox.Min.Y, queryBox.Min.Z), new Vector3(queryBox.Max.X,queryBox.Max.Y, queryBox.Max.Z));
-			results = World.Instance.EntitiesOctTree.GetColliding(queryBox);
+			Vector3 shipVelocity = new Vector3(PathManager.Instance.Velocities[ship.ValueRW.WaypointProgress].x,PathManager.Instance.Velocities[ship.ValueRW.WaypointProgress].y,PathManager.Instance.Velocities[ship.ValueRW.WaypointProgress].z);
+			World.Instance.QueryBox = new Octree.BoundingBox(new Vector3(shipPos.x, shipPos.y, shipPos.z), new Vector3(shipVelocity.Length() + (PathManager.Instance.MaxRandomVelocity * ship.ValueRO.ProjectileSpeed)));
+			World.Instance.QueryBox.SetMinMax(new Vector3(World.Instance.QueryBox.Min.X,World.Instance.QueryBox.Min.Y, World.Instance.QueryBox.Min.Z), new Vector3(World.Instance.QueryBox.Max.X,World.Instance.QueryBox.Max.Y, World.Instance.QueryBox.Max.Z));
+			results = World.Instance.Query(World.Instance.QueryBox);
+
+			/*var asteroids = new List<Entity>();
+			asteroids.AddRange(World.Instance.MovingAsteroidsInRange);
+			asteroids.AddRange(results);*/
             
 			foreach (var target in results.Where(p => !shootedObjects.Contains(p)))
 			{
+				if (!state.EntityManager.HasComponent<Asteroid>(target))
+				{
+					continue;
+				}
 				var asteroid = state.EntityManager.GetComponentData<Asteroid>(target);
 				var velocityDiffTemp = asteroid.LinearVelocity - PathManager.Instance.Velocities[ship.ValueRW.WaypointProgress];
 				var velocityDiff = new Vector3(velocityDiffTemp.x, velocityDiffTemp.y, velocityDiffTemp.z);
@@ -95,7 +104,7 @@ public partial struct ShipShootSystem : ISystem
 						{
 							t = t1;
 						}
-						if (t <= 10f)
+						if (t <= 3f)
 						{
 							var aimPoint = new Vector3(asteroid.Position.x, asteroid.Position.y, asteroid.Position.z) + velocityDiff * t;
 							var shootDir = aimPoint - new Vector3(transform.ValueRO.Position.x, transform.ValueRO.Position.y, transform.ValueRO.Position.z);
